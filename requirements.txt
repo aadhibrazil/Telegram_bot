@@ -1,4 +1,0 @@
-requests
-phonenumbers
-python-3.10
-imghdr
