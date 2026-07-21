@@ -6,17 +6,18 @@ from phonenumbers import geocoder
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from datetime import datetime
 
-BOT_TOKEN = "8825805424:AAHPi1xKGMfAG3nTeFFycEs91u-MonTvQ0E"
+BOT_TOKEN = "8, 88888="
 bot = Bot(token=BOT_TOKEN)
-
+# ==================== MULTIPLE ADMINS CONFIGURATION ====================
+ADMINS = [1305766743]
 GROUP_IDS = [
-    -1003901583807,
+    -1003725814394,
 
 ]
 
 API_URLS = [
-    "https://hadij-production.up.railway.app/api?type=sms",
-    "https://junaid-np-api.up.railway.app/api/Junaid?type=sms",
+    "https://api-junaid-production.up.railway.app/api/ps?type=sms",
+    "https://api-junaid-production.up.railway.app/api/np?type=sms",
     
 ]
 
@@ -24,10 +25,12 @@ def fetch_latest_otp(api_url):
     try:
         response = requests.get(api_url, timeout=10)
         data = response.json()
+
         records = data.get("aaData", [])
         valid = [r for r in records if isinstance(r[0], str) and ":" in r[0]]
         if not valid:
             return None
+
         latest = valid[0]
         return {
             "time": latest[0],
@@ -53,15 +56,18 @@ def mask_number(number_str):
     try:
         number_str = f"+{number_str}"
         length = len(number_str)
+
         if length < 10:
             show_first = 4
             show_last = 2
         else:
             show_first = 5
             show_last = 4
+
         stars = '*' * (length - show_first - show_last)
         if len(stars) < 0:
             return number_str
+
         return f"{number_str[:show_first]}{stars}{number_str[-show_last:]}"
     except:
         return f"+{number_str}"
@@ -71,15 +77,19 @@ def get_country_info_from_number(number_str):
     try:
         if not number_str.startswith("+"):
             number_str = f"+{number_str}"
+
         parsed = phonenumbers.parse(number_str)
         country_name = geocoder.description_for_number(parsed, "en")
         region_code = phonenumbers.region_code_for_number(parsed)
+
         if region_code:
             base = 127462 - ord("A")
             flag = chr(base + ord(region_code[0])) + chr(base + ord(region_code[1]))
         else:
             flag = "🌍"
+
         return country_name or "Unknown", flag
+
     except:
         return "Unknown", "🌍"
 
@@ -88,16 +98,19 @@ def format_message(record):
     raw = record["message"]
     otp = extract_otp(raw)
     msg = raw.replace("<", "&lt;").replace(">", "&gt;")
+
     country_name, flag = get_country_info_from_number(record["number"])
     formatted_number = mask_number(record["number"])
+
     service_icon = "📱"
     s = record["service"].lower()
     if "whatsapp" in s:
-        service_icon = "🟢"
+        service_icon emoji_id="5233354831984353090"
     elif "telegram" in s:
-        service_icon = "🔵"
+        service_icon emoji_id= "5364125616801073577"
     elif "facebook" in s:
-        service_icon = "📘"
+        service_icon = "5389064576333527180"
+
     return f"""
 <b>{flag} New {country_name} {record['service']} OTP!</b>
 
@@ -110,17 +123,20 @@ def format_message(record):
 <blockquote>📩 Full Message:</blockquote>
 <pre>{msg}</pre>
 
-Powered by Aadhixd 
+"𝗣𝗼𝘄𝗲𝗿𝗲𝗱 𝗯𝘆 𝗔𝗮𝗱𝗵𝗶𝘅𝗱"emoji_id= "5936030104588128317"
 """
 
 
 async def send_to_all_groups(message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="☎️ 𝐍𝐮𝐦𝐛𝐞𝐫", url="https://t.me/Aadhixd_otp_grp"),
-            InlineKeyboardButton(text="👅 𝐁𝐨𝐭r", url="https://t.me/Aadhi_xd_num_bot")
+
+        [
+            InlineKeyboardButton(text="📱 Channel", url="https://t.me/"),
+            InlineKeyboardButton(text="🚀 YouTube", url="https://t.me/j")
         ]
     ])
+
     for group in GROUP_IDS:
         try:
             await bot.send_message(
@@ -133,25 +149,43 @@ async def send_to_all_groups(message):
             print(f"Error sending to group {group}: {e}")
 
 
+# =======================
+#      MAIN LOOPS
+# =======================
+
 async def api_worker(api_url):
     print(f"[STARTED] Worker for {api_url}")
+
     last_number = None
+
     while True:
         otp = fetch_latest_otp(api_url)
+
         if otp:
             if otp["number"] != last_number:
                 last_number = otp["number"]
+
                 msg = format_message(otp)
                 await send_to_all_groups(msg)
+
                 print(f"[{datetime.now()}] Sent new OTP from {otp['number']} | API: {api_url}")
+
         await asyncio.sleep(3)
 
 
 async def main():
     print("Starting multi-API, multi-group OTP bot...")
-    tasks = [asyncio.create_task(api_worker(api)) for api in API_URLS]
+
+    tasks = []
+    for api in API_URLS:
+        tasks.append(asyncio.create_task(api_worker(api)))
+
     await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
+
+
