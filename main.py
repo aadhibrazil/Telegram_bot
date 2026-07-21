@@ -6,7 +6,7 @@ from phonenumbers import geocoder
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from datetime import datetime
 
-BOT_TOKEN = "8, 88888="
+BOT_TOKEN = "8825805424:AAFfooAg3RRtvJjiZ9OZdhNAUFMhRZ6hdjI"
 bot = Bot(token=BOT_TOKEN)
 # ==================== MULTIPLE ADMINS CONFIGURATION ====================
 ADMINS = [1305766743]
