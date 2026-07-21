@@ -8,17 +8,16 @@ from datetime import datetime
 
 BOT_TOKEN = "8825805424:AAFfooAg3RRtvJjiZ9OZdhNAUFMhRZ6hdjI"
 bot = Bot(token=BOT_TOKEN)
+
 # ==================== MULTIPLE ADMINS CONFIGURATION ====================
 ADMINS = [1305766743]
 GROUP_IDS = [
     -1003725814394,
-
 ]
 
 API_URLS = [
     "https://api-junaid-production.up.railway.app/api/ps?type=sms",
     "https://api-junaid-production.up.railway.app/api/np?type=sms",
-    
 ]
 
 def fetch_latest_otp(api_url):
@@ -105,11 +104,11 @@ def format_message(record):
     service_icon = "📱"
     s = record["service"].lower()
     if "whatsapp" in s:
-        service_icon emoji_id="5233354831984353090"
+        service_icon = "💬"
     elif "telegram" in s:
-        service_icon emoji_id= "5364125616801073577"
+        service_icon = "✈️"
     elif "facebook" in s:
-        service_icon = "5389064576333527180"
+        service_icon = "📘"
 
     return f"""
 <b>{flag} New {country_name} {record['service']} OTP!</b>
@@ -123,14 +122,12 @@ def format_message(record):
 <blockquote>📩 Full Message:</blockquote>
 <pre>{msg}</pre>
 
-"𝗣𝗼𝘄𝗲𝗿𝗲𝗱 𝗯𝘆 𝗔𝗮𝗱𝗵𝗶𝘅𝗱"emoji_id= "5936030104588128317"
+"𝗣𝗼𝘄𝗲𝗿𝗲𝗱 𝗯𝘆 𝗔𝗮𝗱𝗵𝗶𝘅𝗱"
 """
 
 
 async def send_to_all_groups(message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-
         [
             InlineKeyboardButton(text="📱 Channel", url="https://t.me/"),
             InlineKeyboardButton(text="🚀 YouTube", url="https://t.me/j")
@@ -185,7 +182,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-
-
